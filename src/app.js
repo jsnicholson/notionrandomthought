@@ -29,15 +29,15 @@ let vm = new vue({
     },
     methods: {
         async Handler(e) {
-            Config(this.steps,this.$);
-            FindAllAvailableDb(this.steps,this.$);
-            FetchAllForgottenItemsFromAllSources(this.steps,this.$);
-            FetchAllUnwantedItemsFromDestination(this.steps,this.$);
-            RemoveUnwantedItemsFromSourceItems(this.steps,this.$);
-            PickRandomItems(this.steps,this.$);
-            SimplifyItems(this.steps,this.$);
-            ClearUnwantedItemsFromDest(this.steps,this.$);
-            PushAllSimpleItemsToSimpleDb(this.steps,this.$);
+            Config.run(this.steps,this.$);
+            FindAllAvailableDb.run(this.steps,this.$);
+            FetchAllForgottenItemsFromAllSources.run(this.steps,this.$);
+            FetchAllUnwantedItemsFromDestination.run(this.steps,this.$);
+            RemoveUnwantedItemsFromSourceItems.run(this.steps,this.$);
+            PickRandomItems.run(this.steps,this.$);
+            SimplifyItems.run(this.steps,this.$);
+            ClearUnwantedItemsFromDest.run(this.steps,this.$);
+            PushAllSimpleItemsToSimpleDb.run(this.steps,this.$);
         }
     }
 });
