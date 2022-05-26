@@ -1,22 +1,14 @@
-// const axios = require('axios')
-// const url = 'http://checkip.amazonaws.com/';
-let response;
-//import { Client } from "@notionhq/client";
-
-var AWS = require('aws-sdk');
+const steps = require("steps.js");
 
 exports.lambdaHandler = async (event, context) => {
-    let secretManager = new AWS.SecretsManager({region:process.env.SECRET_REGION});
-    const data = await secretManager.getSecretValue({SecretId:process.env.SECRET_ARN}).promise();
-    const key = JSON.parse(data.SecretString).api_key;
-
+    const key = await GetNotionApiKey();
+    steps.Start(key);
+    let response;
     try {
-        // const ret = await axios(url);
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
                 message: 'hello world',
-                // location: ret.data.trim()
             })
         }
     } catch (err) {
@@ -26,3 +18,11 @@ exports.lambdaHandler = async (event, context) => {
 
     return response
 };
+
+async function GetNotionApiKey() {
+    var AWS = require('aws-sdk');
+    let secretManager = new AWS.SecretsManager({region:process.env.SECRET_REGION});
+    const data = await secretManager.getSecretValue({SecretId:process.env.SECRET_ARN}).promise();
+    const key = JSON.parse(data.SecretString).api_key;
+    return key;
+}
