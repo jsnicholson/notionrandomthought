@@ -1,23 +1,49 @@
-const steps = require("steps.js");
+const notion = require("node_modules/@notionhq/client");
 
-exports.lambdaHandler = async (event, context) => {
-    const key = await GetNotionApiKey();
-    steps.Start(key);
-    let response;
+async function Start() {
+    const notionApiKey = await GetNotionApiKey();
+    notionClient = new notion.Client({auth:notionApiKey});
+    await FindAllAvailableDb();
+    await FetchAllForgottenItemsFromAllSources();
+    await FetchAllUnwantedItemsFromDestination();
+    RemoveUnwantedItemsFromSourceItems();
+    PickRandomItems();
+    SimplifyItems();
+    await ClearUnwantedItemsFromDest();
+    await PushAllSimpleItemsToSimpleDb();
+}
+
+async function FindAllAvailableDb() {
+    let response = {};
     try {
-        response = {
-            'statusCode': 200,
-            'body': JSON.stringify({
-                message: 'hello world',
-            })
-        }
+        response = await notionClient.search({
+            filter: {
+                property:'objct',
+                value:'database'
+            }
+        });
     } catch (err) {
-        console.log(err);
-        return err;
+        console.log(JSON.stringify(err));
     }
 
-    return response
-};
+    if(response.status != 200)
+        return response;
+
+    let allSourceDb = []
+    let destDb = 0
+    for(const db of response.results) {
+        if(db.id != process.env.NOTION_DATABASE_DESTINATION)
+            allSourceDb.push({
+                id:db.id,
+                name:db.title[0].plain_text,
+            })
+        else
+            destDb = {
+            id:db.id,
+            name:db.title[0].plain_text
+            }
+    }
+}
 
 async function GetNotionApiKey() {
     var AWS = require('aws-sdk');
@@ -26,3 +52,5 @@ async function GetNotionApiKey() {
     const key = JSON.parse(data.SecretString).api_key;
     return key;
 }
+
+module.exports = {Start};
