@@ -5,6 +5,13 @@ Description: >
 
   Sample SAM Template for notionrandomthought
 
+Globals:
+  Function:
+    Environment:
+      Variables:
+        SECRET_REGION: eu-west-2
+        SECRET_ARN: arn:aws:secretsmanager:eu-west-2:461792260104:secret:prod/notionrandomthoughts/integration-cvQCpV
+
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -14,3 +21,10 @@ Resources:
       Runtime: nodejs16.x
       Architectures:
         - x86_64
+      Events:
+        CloudWatchEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 2 * * ? *)
+      MemorySize: 128
+      Timeout: 100
