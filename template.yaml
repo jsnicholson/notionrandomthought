@@ -13,19 +13,22 @@ Globals:
         SECRET_ARN: arn:aws:secretsmanager:eu-west-2:461792260104:secret:prod/notionrandomthoughts/integration-cvQCpV
 
 Resources:
-  HelloWorldFunction:
+  NotionRandomThoughtFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello-world/
+      CodeUri: random-thought/
       Handler: entry.lambdaHandler
       Runtime: nodejs16.x
       Architectures:
         - x86_64
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: 'arn:aws:secretsmanager:eu-west-2:461792260104:secret:prod/notionrandomthoughts/integration-cvQCpV'
       Events:
         CloudWatchEvent:
           Type: Schedule
           Properties:
-            Schedule: cron(0 2 * * ? *)
+            Schedule: cron(0 1 * * ? *)
       MemorySize: 128
       Timeout: 100
       Environment:

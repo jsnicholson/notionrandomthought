@@ -1,18 +1,17 @@
 const app = require("app.js");
 
 exports.lambdaHandler = async (event, context) => {
-    let response = await app.Start();
     try {
+        let response = await app.Main(context);
         response = {
             'statusCode': 200,
             'body': JSON.stringify({
                 message: 'hello world',
             })
         }
-    } catch (err) {
-        console.log(err);
-        return err;
+        return response;
+    } catch(e) {
+        console.log(e);
+        return e;
     }
-
-    return response
 };
